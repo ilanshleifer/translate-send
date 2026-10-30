@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: file:; connect-src 'self' https://translate.googleapis.com https://translation.googleapis.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin">
+<meta name="theme-color" content="#0f7b5f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="תרגם ושלח">
+<meta name="description" content="כותבים בעברית ושולחים לכל איש קשר בשפה שלו. הודעות שנכנסות מתורגמות לעברית.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>תרגם ושלח</title>
+<script>try{var t=localStorage.getItem('wat.theme');t=t?JSON.parse(t):(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}</script>
+<style>
+:root{
+  --bg:#f3f5f4;--surface:#ffffff;--surface2:#eaf0ed;--text:#14201b;--muted:#5b6b64;--border:#d4ddd9;
+  --accent:#0f7b5f;--accent-ink:#ffffff;--send:#1a9e4f;--send-ink:#ffffff;--danger:#b3261e;
+  --shadow:0 1px 2px rgba(16,32,27,.05),0 6px 18px rgba(16,32,27,.05);
+  accent-color:var(--accent);color-scheme:light;
+}
+html.dark{
+  --bg:#0d1311;--surface:#151d1a;--surface2:#1e2925;--text:#e4ece8;--muted:#92a39b;--border:#2a3833;
+  --accent:#3dbb92;--accent-ink:#04130d;--send:#27b864;--send-ink:#04130d;--danger:#ff8a80;
+  --shadow:none;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:calc(8px + env(safe-area-inset-top)) 16px 8px;background:var(--surface);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand img{width:28px;height:28px;border-radius:7px;flex-shrink:0}
+.brand h1{font-size:17px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toggles{display:flex;gap:6px;flex-shrink:0}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--muted);padding:4px 10px;font-size:13px;cursor:pointer;min-height:32px;min-width:36px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+main{max-width:640px;margin:0 auto;padding:12px 16px calc(88px + env(safe-area-inset-bottom))}
+.tab{display:none}.tab.active{display:block}
+h2{font-size:15px;margin:18px 0 8px;color:var(--muted);font-weight:600}
+
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;max-width:640px;margin:0 auto}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer;white-space:nowrap}
+.chip small{color:var(--muted);margin-inline-start:6px;font-size:12px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.8}
+.chip.add{border-style:dashed;color:var(--muted)}
+
+textarea,input[type=text],input[type=tel],input[type=password],input[type=search],select{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+textarea{min-height:112px;resize:vertical;font-size:17px}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+label.field{display:block;margin:10px 0}
+label.field>span{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.check{display:flex;align-items:center;gap:8px;margin:10px 0;cursor:pointer}
+.check input{width:18px;height:18px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border-radius:12px;
+  border:1px solid var(--border);background:var(--surface);font-weight:600;cursor:pointer;text-decoration:none;color:var(--text)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.send{background:var(--send);border-color:var(--send);color:var(--send-ink);flex:1 1 180px;font-size:17px}
+.btn.ghost{background:transparent}
+.btn.small{min-height:36px;padding:0 12px;font-size:14px}
+.btn.wide{width:100%}
+.btn.link{border:0;background:none;padding:0 4px;min-height:0;color:var(--accent);font-weight:600}
+.btn:disabled,.btn.disabled{opacity:.45;pointer-events:none}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.target-row{display:flex;gap:8px;align-items:center;margin:0 0 10px}
+.target-row>span{font-size:14px;color:var(--muted);white-space:nowrap}
+.target-row select{flex:1;min-width:0;padding:8px 10px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+.card.notice{background:var(--surface2)}
+.lbl{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
+.muted{color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:6px 0}
+.back{font-size:14px;color:var(--muted);margin-top:8px;white-space:pre-wrap}
+.back .bt{color:var(--text);opacity:.8}
+.err{color:var(--danger);font-size:14px}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+
+.cards{display:grid;gap:10px;grid-template-columns:1fr;margin:12px 0}
+@media (min-width:560px){.cards.two{grid-template-columns:1fr 1fr}}
+.rcard{margin:0}
+.rcard.chosen{outline:2px solid var(--accent);outline-offset:-1px}
+.rhead{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:12px}
+.badge{padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--muted);font-weight:600}
+.rtext{white-space:pre-wrap;font-size:17px;margin:8px 0;word-break:break-word}
+
+.list{list-style:none;margin:0;padding:0}
+.citem{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--border)}
+.cinfo{display:flex;flex-direction:column;min-width:0}
+.cinfo span{font-size:13px}
+.cact{display:flex;gap:6px}
+.empty{padding:16px 0;color:var(--muted)}
+
+fieldset{border:0;margin:0;padding:0}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:12px;margin:8px 0;cursor:pointer;background:var(--surface)}
+.opt input{margin-top:4px;width:18px;height:18px;flex-shrink:0}
+.opt b{display:block}
+.opt small{display:block;color:var(--muted);font-size:13px;line-height:1.45}
+details{margin:10px 0}
+details summary{cursor:pointer;font-weight:600;padding:6px 0}
+ol{padding-inline-start:22px;margin:6px 0}
+ol li{margin:4px 0;font-size:14px}
+code,bdi.ltr{direction:ltr;unicode-bidi:isolate}
+a{color:var(--accent)}
+
+.fileloc{margin:8px 0;font-size:12px;color:var(--muted);word-break:break-all}
+
+nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);
+  background:var(--surface);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+nav.bottom button{border:0;background:none;color:var(--muted);font-size:12px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-height:56px}
+nav.bottom svg{width:22px;height:22px}
+nav.bottom button[aria-selected="true"]{color:var(--accent);font-weight:600}
+
+#toast{position:fixed;bottom:calc(72px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:10;
+  background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;
+  transition:opacity .2s;max-width:calc(100% - 32px);text-align:center}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><img src="icon-192.png" alt=""><h1 data-i18n="appTitle">תרגם ושלח</h1></div>
+  <div class="toggles">
+    <div class="seg" role="group" data-i18n-aria="uiLangAria" aria-label="שפת ממשק">
+      <button type="button" data-ui-lang="he">עב</button><button type="button" data-ui-lang="en">EN</button>
+    </div>
+    <div class="seg" role="group" data-i18n-aria="themeAria" aria-label="ערכת נושא">
+      <button type="button" data-theme-set="light" data-i18n-aria="themeLight" aria-label="בהיר">☀</button><button type="button" data-theme-set="dark" data-i18n-aria="themeDark" aria-label="כהה">☾</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="chips" id="chips"></div>
+
+  <!-- ============ Compose: Hebrew -> contact language ============ -->
+  <section id="tab-compose" class="tab active">
+    <div id="welcome" class="card notice" hidden>
+      <b data-i18n="welcomeTitle">ברוכים הבאים 👋</b>
+      <ol id="welcomeSteps"></ol>
+      <div class="hint" data-i18n="welcomePrivacy"></div>
+      <div class="row" style="margin-bottom:0">
+        <button type="button" class="btn primary small" id="btnWelcomeAdd" data-i18n="newContact">+ איש קשר חדש</button>
+        <button type="button" class="btn ghost small" id="btnWelcomeOk" data-i18n="welcomeOk">הבנתי</button>
+      </div>
+    </div>
+    <div class="target-row">
+      <span data-i18n="targetLang">שפת יעד</span>
+      <select id="targetSel"></select>
+    </div>
+    <div class="row" id="saveLangRow" hidden style="margin-top:-4px">
+      <button type="button" class="btn link" id="btnSaveLang"></button>
+    </div>
+    <textarea id="srcText" dir="auto" data-i18n-ph="composePh" placeholder="כתוב כאן בעברית…"></textarea>
+    <div class="row">
+      <button type="button" class="btn primary" id="btnTranslate" data-i18n="translate">תרגם</button>
+      <span class="hint" data-i18n="shortcutHint">במחשב: Ctrl+Enter</span>
+    </div>
+
+    <div id="composeCards" class="cards" hidden></div>
+
+    <div id="resultBox" class="card" hidden>
+      <span class="lbl" data-i18n="finalLabel">ההודעה שתישלח (אפשר לערוך)</span>
+      <textarea id="outText" dir="auto"></textarea>
+      <div class="back" id="outBack"></div>
+      <div class="meta" id="outMeta"></div>
+      <label class="check"><input type="checkbox" id="attachChk"><span data-i18n="attachOrig">צרף את המקור בעברית</span></label>
+      <div class="row">
+        <a id="btnSend" class="btn send disabled" href="#" data-i18n="sendWa">שלח בווטסאפ</a>
+        <button type="button" class="btn" id="btnCopy" data-i18n="copy">העתק</button>
+        <button type="button" class="btn ghost" id="btnClear" data-i18n="clear">נקה</button>
+      </div>
+      <div class="hint" id="sendHint"></div>
+    </div>
+  </section>
+
+  <!-- ============ Incoming: any language -> Hebrew ============ -->
+  <section id="tab-incoming" class="tab">
+    <button type="button" class="btn primary wide" id="btnPaste" data-i18n="pasteTranslate">📋 הדבק ותרגם</button>
+    <textarea id="inText" dir="auto" data-i18n-ph="incomingPh" placeholder="הדבק כאן הודעה שקיבלת, בכל שפה…" style="margin-top:10px"></textarea>
+    <div class="row">
+      <button type="button" class="btn" id="btnInTranslate" data-i18n="toHebrew">תרגם לעברית</button>
+      <button type="button" class="btn ghost" id="btnInClear" data-i18n="clear">נקה</button>
+    </div>
+    <div id="inCards" class="cards"></div>
+    <div id="langSuggest" class="card notice" hidden></div>
+    <div class="row"><button type="button" class="btn" id="btnReply" data-i18n="reply" hidden>השב ←</button></div>
+  </section>
+
+  <!-- ============ Contacts ============ -->
+  <section id="tab-contacts" class="tab">
+    <form id="contactForm" class="card" hidden novalidate>
+      <span class="lbl" id="formTitle"></span>
+      <button type="button" class="btn small" id="btnPick" data-i18n="pickFromPhone" hidden>בחר מאנשי הקשר בטלפון</button>
+      <label class="field"><span data-i18n="fName">שם</span><input type="text" id="fName" maxlength="80" autocomplete="off"></label>
+      <label class="field"><span data-i18n="fPhone">טלפון (לא חובה)</span><input type="tel" id="fPhone" dir="ltr" inputmode="tel" autocomplete="off" placeholder="+66 81 234 5678"></label>
+      <div class="hint" data-i18n="fPhoneHint"></div>
+      <label class="field"><span data-i18n="fLang">השפה שלו</span>
+        <input type="search" id="fLangFilter" data-i18n-ph="fLangFilter" placeholder="חיפוש שפה…" style="margin-bottom:6px">
+        <select id="fLang"></select>
+      </label>
+      <label class="check"><input type="checkbox" id="fAttach"><span data-i18n="fAttach">צרף תמיד את המקור בעברית</span></label>
+      <div class="row">
+        <button type="submit" class="btn primary" data-i18n="save">שמור</button>
+        <button type="button" class="btn ghost" id="btnFormCancel" data-i18n="cancel">ביטול</button>
+      </div>
+    </form>
+    <div class="row"><button type="button" class="btn primary" id="btnAddContact" data-i18n="newContact">+ איש קשר חדש</button></div>
+    <ul id="contactList" class="list"></ul>
+    <div class="row" style="margin-top:16px">
+      <button type="button" class="btn ghost small" id="btnExport" data-i18n="export">ייצוא אנשי קשר</button>
+      <button type="button" class="btn ghost small" id="btnImport" data-i18n="import">ייבוא אנשי קשר</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </section>
+
+  <!-- ============ Settings ============ -->
+  <section id="tab-settings" class="tab">
+    <h2 data-i18n="sEngine">מנוע תרגום</h2>
+    <fieldset id="engineSet">
+      <label class="opt"><input type="radio" name="engine" value="free"><span><b data-i18n="eFree"></b><small data-i18n="eFreeD"></small></span></label>
+      <label class="opt"><input type="radio" name="engine" value="official"><span><b data-i18n="eOfficial"></b><small data-i18n="eOfficialD"></small></span></label>
+      <label class="opt"><input type="radio" name="engine" value="compare"><span><b data-i18n="eCompare"></b><small data-i18n="eCompareD"></small></span></label>
+    </fieldset>
+
+    <h2 data-i18n="sKey">מפתח API (למנוע הרשמי)</h2>
+    <div class="card">
+      <div class="hint" id="keyStatus"></div>
+      <div class="row" style="flex-wrap:nowrap">
+        <input type="password" id="keyInput" dir="ltr" autocomplete="off" spellcheck="false" data-i18n-ph="keyPh" placeholder="הדבק כאן את המפתח">
+        <button type="button" class="btn small" id="btnShowKey" data-i18n="show">הצג</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn primary small" id="btnSaveKey" data-i18n="saveKey">שמור מפתח</button>
+        <button type="button" class="btn small" id="btnTestKey" data-i18n="testKey">בדוק חיבור</button>
+        <button type="button" class="btn ghost small" id="btnClearKey" data-i18n="clearKey">מחק מפתח</button>
+      </div>
+      <div class="hint" id="keyTest"></div>
+      <details>
+        <summary data-i18n="sGuide">איך יוצרים מפתח API</summary>
+        <ol id="guideList"></ol>
+      </details>
+    </div>
+
+    <h2 data-i18n="sOptions">אפשרויות</h2>
+    <label class="opt"><input type="checkbox" id="backChk"><span><b data-i18n="sBack"></b><small data-i18n="sBackD"></small></span></label>
+    <label class="field"><span data-i18n="sLink">איך לפתוח את ווטסאפ</span>
+      <select id="linkSel">
+        <option value="auto" data-i18n="linkAuto"></option>
+        <option value="scheme" data-i18n="linkScheme"></option>
+        <option value="web" data-i18n="linkWeb"></option>
+      </select>
+    </label>
+
+    <h2 data-i18n="sUsage">שימוש במנוע הרשמי החודש</h2>
+    <div class="hint"><span id="usageText"></span> · <a href="https://cloud.google.com/translate/pricing" target="_blank" rel="noopener noreferrer" data-i18n="pricing">דף התמחור של גוגל</a></div>
+
+    <h2 data-i18n="sInstall">התקנה למסך הבית</h2>
+    <div class="hint" id="installText"></div>
+    <button type="button" class="btn small" id="btnInstall" data-i18n="installBtn" hidden>התקן אפליקציה</button>
+
+    <h2 data-i18n="sPrivacy">פרטיות</h2>
+    <div class="hint" data-i18n="privacyText"></div>
+    <div class="row"><button type="button" class="btn ghost small" id="btnWipe" style="color:var(--danger)" data-i18n="wipe">מחק את כל הנתונים מהמכשיר</button></div>
+  </section>
+
+  <div class="hint" style="margin-top:32px" data-i18n="notAffiliated"></div>
+</main>
+
+<nav class="bottom" role="tablist">
+  <button type="button" role="tab" data-tab="compose" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <span data-i18n="tabCompose">כתיבה</span></button>
+  <button type="button" role="tab" data-tab="incoming" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
+    <span data-i18n="tabIncoming">נכנסת</span></button>
+  <button type="button" role="tab" data-tab="contacts" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span data-i18n="tabContacts">אנשי קשר</span></button>
+  <button type="button" role="tab" data-tab="settings" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span data-i18n="tabSettings">הגדרות</span></button>
+</nav>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---------- storage (never throws; the app works without it) ---------- */
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+const K = { ui: 'wat.ui', theme: 'wat.theme', state: 'wat.state', key: 'wat.key' };
+
+/* ---------- UI strings ---------- */
+const I18N = {
+  he: {
+    appTitle: 'תרגם ושלח', uiLangAria: 'שפת ממשק', themeAria: 'ערכת נושא', themeLight: 'בהיר', themeDark: 'כהה',
+    welcomeTitle: 'ברוכים הבאים 👋',
+    welcomeSteps: [
+      'מוסיפים איש קשר וקובעים לו שפה, למשל תאית.',
+      'כותבים בעברית ולוחצים "תרגם". מתחת לתרגום מופיע תרגום חזרה לעברית, כדי לבדוק את המשמעות.',
+      'לוחצים "שלח בווטסאפ". הצ\'אט נפתח עם הטקסט מוכן בתיבה, ונשאר רק ללחוץ שליחה.',
+      'קיבלת הודעה בשפה אחרת? מעתיקים אותה, ובלשונית "נכנסת" לוחצים "הדבק ותרגם".',
+    ],
+    welcomePrivacy: 'אנשי הקשר נשמרים רק בטלפון שלך. הטקסט שמתרגמים נשלח ל-Google Translate.',
+    welcomeOk: 'הבנתי',
+    notAffiliated: 'תרגם ושלח היא אפליקציה עצמאית ואינה קשורה ל-WhatsApp, ל-Meta או ל-Google.',
+    backup: 'גיבוי',
+    tabCompose: 'כתיבה', tabIncoming: 'נכנסת', tabContacts: 'אנשי קשר', tabSettings: 'הגדרות',
+    quickChip: 'ללא איש קשר', addChip: '+ הוסף',
+    targetLang: 'שפת יעד', saveForContact: '💾 שמור כשפה של {0}',
+    composePh: 'כתוב כאן בעברית…', translate: 'תרגם', translating: 'מתרגם…', shortcutHint: 'במחשב: Ctrl+Enter',
+    finalLabel: 'ההודעה שתישלח (אפשר לערוך)', backLabel: 'תרגום חזרה לבדיקה:', recheck: '↻ בדוק שוב', checking: 'בודק…',
+    editedHint: 'ערכת את התרגום.', attachOrig: 'צרף את המקור בעברית',
+    sendWa: 'שלח בווטסאפ', copy: 'העתק', copied: 'הועתק', clear: 'נקה', sent: '✓ הועבר לווטסאפ',
+    hintChat: 'ייפתח הצ\'אט עם {0}. הטקסט יחכה בתיבה, ונשאר רק ללחוץ שליחה.',
+    hintPick: 'ל-{0} אין מספר טלפון, ולכן ווטסאפ יבקש לבחור צ\'אט.',
+    hintQuick: 'מצב מהיר: ווטסאפ יבקש לבחור צ\'אט.',
+    pasteTranslate: '📋 הדבק ותרגם', incomingPh: 'הדבק כאן הודעה שקיבלת, בכל שפה…', toHebrew: 'תרגם לעברית',
+    pasteManual: 'אין גישה ללוח. לחץ לחיצה ארוכה בתיבה ובחר "הדבק".',
+    suggestLang: 'ההודעה כתובה ב{0}, אבל השפה של {1} מוגדרת כ{2}.', suggestQuick: 'ההודעה כתובה ב{0}. לענות באותה שפה?',
+    update: 'עדכן ל{0}', reply: 'השב ←', emptyText: 'אין טקסט לתרגום', autoDetected: 'זוהה: {0}',
+    newContact: '+ איש קשר חדש', editContact: 'עריכת איש קשר', addContact: 'איש קשר חדש',
+    pickFromPhone: 'בחר מאנשי הקשר בטלפון', fName: 'שם', fPhone: 'טלפון (לא חובה)',
+    fPhoneHint: 'מספר ישראלי שמתחיל ב-0 יומר אוטומטית ל-972. בלי מספר, ווטסאפ יבקש לבחור צ\'אט, וזה מתאים לקבוצות.',
+    fLang: 'השפה שלו', fLangFilter: 'חיפוש שפה…', fAttach: 'צרף תמיד את המקור בעברית',
+    save: 'שמור', cancel: 'ביטול', edit: 'ערוך', del: 'מחק', select: 'בחר', confirmDel: 'למחוק את {0}?',
+    noContacts: 'עדיין אין אנשי קשר. הוסף את הראשון: שם, מספר ושפה.',
+    export: 'ייצוא אנשי קשר', import: 'ייבוא אנשי קשר', imported: 'יובאו {0} אנשי קשר', importBad: 'הקובץ לא תקין',
+    errName: 'צריך שם', errPhone: 'המספר לא נראה תקין', saved: 'נשמר',
+    sEngine: 'מנוע תרגום',
+    eFree: 'חינמי (ברירת מחדל)',
+    eFreeD: 'בלי הרשמה ובלי עלות. אותו מנוע שמשמש את translate.google.com, אבל דרך ממשק לא רשמי, ולכן גוגל יכולה להגביל אותו. אם שמרת מפתח אישי, הוא ישמש גיבוי אוטומטי.',
+    eOfficial: 'רשמי, עם מפתח אישי שלך',
+    eOfficialD: 'Google Cloud Translation API. יציב ורשמי, ואתה משלם לגוגל לפי השימוש שלך: בערך 20$ למיליון תווים, עם מכסה חודשית חינמית (בדוק בדף התמחור). אם הוא נכשל, האפליקציה עוברת אוטומטית למנוע החינמי.',
+    eCompare: 'השוואה',
+    eCompareD: 'שולח לשני המנועים במקביל ומציג את התוצאות זו לצד זו, עם זמני תגובה. מתאים להדגמה.',
+    sKey: 'מפתח API אישי (לא חובה)', keyPh: 'הדבק כאן את המפתח', show: 'הצג', hide: 'הסתר',
+    saveKey: 'שמור מפתח', testKey: 'בדוק חיבור', clearKey: 'מחק מפתח',
+    keySaved: 'שמור מפתח במכשיר הזה (מסתיים ב-{0})', keyNone: 'לא נשמר מפתח', keyOk: 'החיבור תקין: "שלום" ← "{0}" ({1} ms)',
+    sGuide: 'איך יוצרים מפתח API (בערך 10 דקות)',
+    guide: [
+      'נכנסים ל-console.cloud.google.com ויוצרים פרויקט חדש.',
+      'מחברים חשבון חיוב (Billing). גוגל דורשת את זה גם בשביל המכסה החינמית.',
+      'APIs & Services ← Library ← מחפשים "Cloud Translation API" ← Enable.',
+      'APIs & Services ← Credentials ← Create credentials ← API key.',
+      'עורכים את המפתח. תחת API restrictions בוחרים Restrict key ומסמנים רק את Cloud Translation API.',
+      'תחת Application restrictions בוחרים Websites ומוסיפים את הכתובת של האפליקציה: {0}',
+      'מומלץ: Billing ← Budgets & alerts ← תקציב של 1$ עם התראה.',
+      'מדביקים את המפתח כאן, לוחצים "שמור מפתח" ואחר כך "בדוק חיבור".',
+    ],
+    sOptions: 'אפשרויות', sBack: 'תרגום חזרה לבדיקה',
+    sBackD: 'מתרגם את התוצאה בחזרה לעברית כדי לבדוק את המשמעות. במנוע הרשמי זה מכפיל את כמות התווים.',
+    sLink: 'איך לפתוח את ווטסאפ', linkAuto: 'אוטומטי (בטלפון: whatsapp://, במחשב: wa.me)',
+    linkScheme: 'whatsapp:// (פותח את האפליקציה ישירות)', linkWeb: 'wa.me (קישור רשמי של ווטסאפ)',
+    sUsage: 'שימוש במנוע הרשמי החודש', usageText: '{0} תווים (הערכה, מהמכשיר הזה בלבד)', pricing: 'דף התמחור של גוגל',
+    sInstall: 'התקנה למסך הבית', installBtn: 'התקן אפליקציה',
+    installIos: 'באייפון: ב-Safari לוחצים שיתוף ← "הוסף למסך הבית".',
+    installAndroid: 'באנדרואיד: ב-Chrome פותחים את התפריט ⋮ ← "התקן אפליקציה".',
+    installNeedsHttps: 'ההתקנה דורשת כתובת https. בהדגמה ברשת הביתית אפשר להשתמש בדף כמו שהוא.',
+    installed: '✓ האפליקציה מותקנת',
+    sPrivacy: 'פרטיות',
+    privacyText: 'אין לאפליקציה שרת, ואף אחד לא אוסף את המידע שלך. אנשי הקשר והמפתח נשמרים רק בדפדפן של המכשיר הזה. הטקסט שמתרגמים נשלח ישירות מהטלפון ל-Google Translate, ולכן לא כדאי לתרגם כאן מידע רגיש במיוחד.',
+    wipe: 'מחק את כל הנתונים מהמכשיר', confirmWipe: 'למחוק את כל אנשי הקשר, המפתח וההגדרות מהמכשיר הזה?',
+    fileLoc: 'מיקום הקובץ', engFree: 'חינמי', engOfficial: 'רשמי', useThis: 'השתמש בזה', chosen: '✓ נבחר', ms: '⁦{0} ms⁩',
+    goSettings: 'להגדרות', langCommon: 'נפוצות', langAll: 'כל השפות',
+    errNoKey: 'אין מפתח API. הזן אותו בהגדרות.', errNet: 'אין חיבור, או שהבקשה נחסמה.',
+    errFree429: 'המנוע החינמי חסם זמנית (יותר מדי בקשות). נסה שוב בעוד דקה או עבור למנוע הרשמי.',
+    errKey: 'המפתח נדחה ({0}). בדוק שה-API מופעל ושהגבלת האתר כוללת את הכתובת הנוכחית.',
+    errHttp: 'שגיאה {0}', errGeneric: 'שגיאה:',
+  },
+  en: {
+    appTitle: 'Translate & Send', uiLangAria: 'Interface language', themeAria: 'Theme', themeLight: 'Light', themeDark: 'Dark',
+    welcomeTitle: 'Welcome 👋',
+    welcomeSteps: [
+      'Add a contact and set their language, for example Thai.',
+      'Write in Hebrew and tap "Translate". Below the translation you get a back-translation into Hebrew to check the meaning.',
+      'Tap "Send in WhatsApp". The chat opens with the text ready in the box; you just tap send.',
+      'Got a message in another language? Copy it, then on the "Incoming" tab tap "Paste & translate".',
+    ],
+    welcomePrivacy: 'Your contacts stay on your phone only. Text you translate is sent to Google Translate.',
+    welcomeOk: 'Got it',
+    notAffiliated: 'Translate & Send is an independent app, not affiliated with WhatsApp, Meta or Google.',
+    backup: 'backup',
+    tabCompose: 'Write', tabIncoming: 'Incoming', tabContacts: 'Contacts', tabSettings: 'Settings',
+    quickChip: 'No contact', addChip: '+ Add',
+    targetLang: 'Target language', saveForContact: '💾 Save as {0}\'s language',
+    composePh: 'Write here in Hebrew…', translate: 'Translate', translating: 'Translating…', shortcutHint: 'Desktop: Ctrl+Enter',
+    finalLabel: 'Message to send (editable)', backLabel: 'Back-translation check:', recheck: '↻ Check again', checking: 'Checking…',
+    editedHint: 'You edited the translation.', attachOrig: 'Attach the Hebrew original',
+    sendWa: 'Send in WhatsApp', copy: 'Copy', copied: 'Copied', clear: 'Clear', sent: '✓ Handed to WhatsApp',
+    hintChat: 'Opens the chat with {0}. The text waits in the box; you just tap send.',
+    hintPick: '{0} has no phone number, so WhatsApp will ask you to pick a chat.',
+    hintQuick: 'Quick mode: WhatsApp will ask you to pick a chat.',
+    pasteTranslate: '📋 Paste & translate', incomingPh: 'Paste a message you received, in any language…', toHebrew: 'Translate to Hebrew',
+    pasteManual: 'No clipboard access. Long-press the box and choose "Paste".',
+    suggestLang: 'This message is in {0}, but {1}\'s language is set to {2}.', suggestQuick: 'This message is in {0}. Reply in the same language?',
+    update: 'Switch to {0}', reply: 'Reply →', emptyText: 'Nothing to translate', autoDetected: 'Detected: {0}',
+    newContact: '+ New contact', editContact: 'Edit contact', addContact: 'New contact',
+    pickFromPhone: 'Pick from phone contacts', fName: 'Name', fPhone: 'Phone (optional)',
+    fPhoneHint: 'An Israeli number starting with 0 is converted to 972 automatically. With no number, WhatsApp asks you to pick a chat, which suits groups.',
+    fLang: 'Their language', fLangFilter: 'Search language…', fAttach: 'Always attach the Hebrew original',
+    save: 'Save', cancel: 'Cancel', edit: 'Edit', del: 'Delete', select: 'Select', confirmDel: 'Delete {0}?',
+    noContacts: 'No contacts yet. Add the first one: name, number and language.',
+    export: 'Export contacts', import: 'Import contacts', imported: 'Imported {0} contacts', importBad: 'Invalid file',
+    errName: 'A name is required', errPhone: 'That number does not look valid', saved: 'Saved',
+    sEngine: 'Translation engine',
+    eFree: 'Free (default)',
+    eFreeD: 'No sign-up, no cost. The same engine translate.google.com uses, through an unofficial interface, so Google may throttle it. If you saved a personal key, it is used as an automatic backup.',
+    eOfficial: 'Official, with your own key',
+    eOfficialD: 'Google Cloud Translation API. Stable and official; you pay Google for your own usage: about $20 per million characters, with a monthly free allowance (check the pricing page). If it fails, the app falls back to the free engine automatically.',
+    eCompare: 'Compare',
+    eCompareD: 'Sends to both engines at once and shows the results side by side with response times. Meant for the demo.',
+    sKey: 'Personal API key (optional)', keyPh: 'Paste the key here', show: 'Show', hide: 'Hide',
+    saveKey: 'Save key', testKey: 'Test connection', clearKey: 'Delete key',
+    keySaved: 'A key is saved on this device (ends in {0})', keyNone: 'No key saved', keyOk: 'Connection OK: "שלום" → "{0}" ({1} ms)',
+    sGuide: 'How to create an API key (about 10 minutes)',
+    guide: [
+      'Go to console.cloud.google.com and create a new project.',
+      'Link a billing account. Google requires it even for the free allowance.',
+      'APIs & Services → Library → search "Cloud Translation API" → Enable.',
+      'APIs & Services → Credentials → Create credentials → API key.',
+      'Edit the key. Under API restrictions choose Restrict key and tick only Cloud Translation API.',
+      'Under Application restrictions choose Websites and add the app\'s address: {0}',
+      'Recommended: Billing → Budgets & alerts → a $1 budget with an alert.',
+      'Paste the key here, tap "Save key", then "Test connection".',
+    ],
+    sOptions: 'Options', sBack: 'Back-translation check',
+    sBackD: 'Translates the result back into Hebrew so you can check the meaning. With the official engine this doubles the character count.',
+    sLink: 'How to open WhatsApp', linkAuto: 'Automatic (phone: whatsapp://, desktop: wa.me)',
+    linkScheme: 'whatsapp:// (opens the app directly)', linkWeb: 'wa.me (WhatsApp\'s official link)',
+    sUsage: 'Official engine usage this month', usageText: '{0} characters (estimate, this device only)', pricing: 'Google pricing page',
+    sInstall: 'Install to home screen', installBtn: 'Install app',
+    installIos: 'On iPhone: in Safari tap Share → "Add to Home Screen".',
+    installAndroid: 'On Android: in Chrome open the ⋮ menu → "Install app".',
+    installNeedsHttps: 'Installing needs an https address. For the home-network demo, use the page as is.',
+    installed: '✓ The app is installed',
+    sPrivacy: 'Privacy',
+    privacyText: 'The app has no server and nobody collects your data. Contacts and the key are stored only in this device\'s browser. Text you translate goes straight from your phone to Google Translate, so avoid translating highly sensitive information here.',
+    wipe: 'Delete all data from this device', confirmWipe: 'Delete all contacts, the key and the settings from this device?',
+    fileLoc: 'File location', engFree: 'Free', engOfficial: 'Official', useThis: 'Use this', chosen: '✓ Chosen', ms: '{0} ms',
+    goSettings: 'Settings', langCommon: 'Common', langAll: 'All languages',
+    errNoKey: 'No API key. Enter it in Settings.', errNet: 'No connection, or the request was blocked.',
+    errFree429: 'The free engine is throttling (too many requests). Try again in a minute or switch to the official engine.',
+    errKey: 'The key was rejected ({0}). Check the API is enabled and the website restriction includes this address.',
+    errHttp: 'Error {0}', errGeneric: 'Error:',
+  },
+};
+let ui = LS.get(K.ui, 'he') === 'en' ? 'en' : 'he';
+function t(k, ...a) {
+  let s = I18N[ui][k] ?? I18N.he[k] ?? k;
+  if (typeof s === 'string') a.forEach((v, i) => { s = s.split('{' + i + '}').join(v); });
+  return s;
+}
+
+/* ---------- languages (Google Translate codes) ---------- */
+const LANGS = ('af sq am ar hy as ay az bm eu be bn bho bs bg ca ceb ny zh-CN zh-TW co hr cs da dv doi nl en eo et ee tl fi fr fy gl ka de el gn gu ht ha haw iw hi hmn hu is ig ilo id ga it ja jw kn kk km rw gom ko kri ku ckb ky lo la lv ln lt lg lb mk mai mg ms ml mt mi mr mni-Mtei lus mn my ne no or om ps fa pl pt pa qu ro ru sm sa gd nso sr st sn sd si sk sl so es su sw sv tg ta tt te th ti ts tr tk ak uk ur ug uz vi cy xh yi yo zu').split(' ');
+const FAV = ['en', 'th', 'ru', 'ar', 'am', 'ti', 'ro', 'tl', 'hi', 'zh-CN', 'uk', 'ne', 'si', 'es', 'fr'];
+const DN_CODE = { iw: 'he', jw: 'jv', 'mni-Mtei': 'mni', 'zh-CN': 'zh-Hans', 'zh-TW': 'zh-Hant', tl: 'fil' };
+const NAME_FIX = {
+  he: { tl: 'פיליפינית (טגלוג)', 'zh-CN': 'סינית (מפושטת)', 'zh-TW': 'סינית (מסורתית)' },
+  en: { tl: 'Filipino (Tagalog)', 'zh-CN': 'Chinese (Simplified)', 'zh-TW': 'Chinese (Traditional)' },
+};
+const dnCache = {};
+function dn(l) {
+  if (!(l in dnCache)) { try { dnCache[l] = new Intl.DisplayNames([l], { type: 'language' }); } catch { dnCache[l] = null; } }
+  return dnCache[l];
+}
+function langName(code) {
+  if (!code) return '';
+  const fix = NAME_FIX[ui][code];
+  if (fix) return fix;
+  const c = DN_CODE[code] || code;
+  for (const l of [ui, 'en']) {
+    const d = dn(l);
+    if (!d) continue;
+    try { const n = d.of(c); if (n && n.toLowerCase() !== c.toLowerCase()) return n; } catch {}
+  }
+  return code;
+}
+const base = c => { c = String(c || '').toLowerCase(); if (c === 'he') c = 'iw'; return c.split('-')[0]; };
+const bcp = c => ({ iw: 'he', jw: 'jv' }[c] || c);
+
+function fillLangSelect(sel, value, filter = '') {
+  const f = filter.trim().toLowerCase();
+  const match = c => !f || langName(c).toLowerCase().includes(f) || c.toLowerCase().includes(f);
+  const mk = c => { const o = document.createElement('option'); o.value = c; o.textContent = langName(c); return o; };
+  sel.textContent = '';
+  const favs = FAV.filter(match);
+  const rest = LANGS.filter(c => !FAV.includes(c) && match(c)).sort((a, b) => langName(a).localeCompare(langName(b), ui));
+  if (favs.length) { const g = document.createElement('optgroup'); g.label = t('langCommon'); favs.forEach(c => g.append(mk(c))); sel.append(g); }
+  if (rest.length) { const g = document.createElement('optgroup'); g.label = t('langAll'); rest.forEach(c => g.append(mk(c))); sel.append(g); }
+  if (value && [...sel.options].some(o => o.value === value)) sel.value = value;
+  else if (value && !f) { sel.prepend(mk(value)); sel.value = value; }
+}
+
+/* ---------- state ---------- */
+const DEF = { contacts: [], current: null, quickLang: 'en', engine: 'free', back: true, linkMode: 'auto', usage: { m: '', chars: 0 }, welcomed: false };
+const S = Object.assign({}, DEF, LS.get(K.state, {}));
+if (!Array.isArray(S.contacts)) S.contacts = [];
+if (!['free', 'official', 'compare'].includes(S.engine)) S.engine = 'free';
+let apiKey = String(LS.get(K.key, '') || '');
+const save = () => LS.set(K.state, S);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const curContact = () => S.contacts.find(c => c.id === S.current) || null;
+
+/* ---------- translation engines ---------- */
+class EngineError extends Error {
+  constructor(engine, code, detail) { super(String(code)); this.engine = engine; this.code = code; this.detail = detail || ''; }
+}
+const GTX = 'https://translate.googleapis.com/translate_a/single';
+const V2 = 'https://translation.googleapis.com/language/translate/v2';
+
+async function viaFree(q, tl, sl) {
+  const qs = `?client=gtx&dt=t&sl=${encodeURIComponent(sl)}&tl=${encodeURIComponent(tl)}`;
+  const enc = encodeURIComponent(q);
+  let r;
+  try {
+    r = enc.length < 3500
+      ? await fetch(GTX + qs + '&q=' + enc)
+      : await fetch(GTX + qs, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body: 'q=' + enc });
+  } catch { throw new EngineError('free', 'net'); }
+  if (!r.ok) throw new EngineError('free', r.status);
+  const d = await r.json();
+  return { text: (d[0] || []).map(s => (s && s[0]) || '').join(''), detected: d[2] || sl };
+}
+
+async function viaOfficial(q, tl, sl) {
+  if (!apiKey) throw new EngineError('official', 'nokey');
+  const body = { q, target: tl, format: 'text' };
+  if (sl && sl !== 'auto') body.source = sl;
+  let r;
+  try {
+    // Key goes in a header, not the URL, so it stays out of logs and history.
+    r = await fetch(V2, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': apiKey }, body: JSON.stringify(body) });
+  } catch { throw new EngineError('official', 'net'); }
+  const d = await r.json().catch(() => null);
+  if (!r.ok) throw new EngineError('official', r.status, d && d.error && d.error.message);
+  bumpUsage(q.length);
+  const tr = d.data.translations[0];
+  return { text: tr.translatedText, detected: tr.detectedSourceLanguage || sl };
+}
+
+async function translate(q, tl, sl, engine) {
+  const t0 = performance.now();
+  const r = engine === 'official' ? await viaOfficial(q, tl, sl) : await viaFree(q, tl, sl);
+  r.ms = Math.round(performance.now() - t0);
+  r.engine = engine;
+  return r;
+}
+const enginesNow = () => S.engine === 'compare' ? ['free', 'official'] : [S.engine];
+
+// Single-engine mode falls back to the other engine: official -> free always; free -> official only
+// when the user saved a personal key. If the backup fails too, the primary's error is what we show.
+async function translateWithFallback(q, tl, sl, engine) {
+  try { return await translate(q, tl, sl, engine); }
+  catch (e) {
+    const alt = engine === 'official' ? 'free' : (apiKey ? 'official' : null);
+    if (!alt) throw e;
+    try { return Object.assign(await translate(q, tl, sl, alt), { fallbackFrom: engine }); }
+    catch { throw e; }
+  }
+}
+
+async function runAll(q, tl, sl) {
+  const list = enginesNow();
+  const one = list.length === 1;
+  const settled = await Promise.allSettled(list.map(e => one ? translateWithFallback(q, tl, sl, e) : translate(q, tl, sl, e)));
+  return settled.map((s, i) => s.status === 'fulfilled'
+    ? Object.assign({ ok: true, back: null }, s.value)
+    : { ok: false, engine: list[i], err: s.reason });
+}
+
+function errMsg(e) {
+  if (!(e instanceof EngineError)) return t('errGeneric') + ' ' + ((e && e.message) || e);
+  if (e.code === 'nokey') return t('errNoKey');
+  if (e.code === 'net') return t('errNet');
+  if (e.engine === 'free' && e.code === 429) return t('errFree429');
+  const extra = e.detail ? ' — ' + e.detail : '';
+  if (e.engine === 'official' && (e.code === 400 || e.code === 403)) return t('errKey', e.code) + extra;
+  return t('errHttp', e.code) + extra;
+}
+
+function bumpUsage(n) {
+  const m = new Date().toISOString().slice(0, 7);
+  if (!S.usage || S.usage.m !== m) S.usage = { m, chars: 0 };
+  S.usage.chars += n;
+  save();
+  renderUsage();
+}
+
+/* ---------- small DOM helpers (text only, never innerHTML) ---------- */
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids) if (c != null && c !== '') e.append(c);
+  return e;
+}
+let toastTimer;
+function toast(msg) {
+  const e = $('#toast');
+  e.textContent = msg;
+  e.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => e.classList.remove('show'), 2800);
+}
+function setBusy(btn, on) {
+  btn.disabled = on;
+  btn.textContent = on ? t('translating') : t(btn.dataset.i18n);
+}
+async function copyText(s) {
+  try { await navigator.clipboard.writeText(s); return true; } catch {}
+  const ta = el('textarea', { style: 'position:fixed;opacity:0' });
+  ta.value = s;
+  document.body.append(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch {}
+  ta.remove();
+  return ok;
+}
+
+/* ---------- WhatsApp hand-off ---------- */
+const IS_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_ANDROID = /Android/i.test(navigator.userAgent);
+const IS_MOBILE = IS_IOS || IS_ANDROID;
+
+function normPhone(v) {
+  const s = String(v || '').trim();
+  if (!s) return '';
+  let d = s.replace(/\D/g, '');
+  if (s.startsWith('00')) d = d.slice(2);
+  else if (!s.startsWith('+') && /^0\d{8,9}$/.test(d)) d = '972' + d.slice(1);
+  return d;
+}
+function waLink(phone, text) {
+  const mode = S.linkMode === 'auto' ? (IS_MOBILE ? 'scheme' : 'web') : S.linkMode;
+  const q = encodeURIComponent(text);
+  if (mode === 'scheme') return 'whatsapp://send?' + (phone ? 'phone=' + phone + '&' : '') + 'text=' + q;
+  return 'https://wa.me/' + (phone || '') + '?text=' + q;
+}
+
+/* ---------- contact chips (shared by Write and Incoming) ---------- */
+function renderChips() {
+  const box = $('#chips');
+  box.textContent = '';
+  box.append(el('button', { type: 'button', class: 'chip', 'aria-pressed': String(!curContact()), onclick: () => selectContact(null) }, '⚡ ' + t('quickChip')));
+  [...S.contacts].sort((a, b) => (b.last || 0) - (a.last || 0)).forEach(c => {
+    box.append(el('button', { type: 'button', class: 'chip', 'aria-pressed': String(S.current === c.id), onclick: () => selectContact(c.id) },
+      c.name, el('small', {}, langName(c.lang))));
+  });
+  box.append(el('button', { type: 'button', class: 'chip add', onclick: () => { showTab('contacts'); openForm(null, 'compose'); } }, t('addChip')));
+  // Keep the selected chip visible. Scroll by delta so it works for both RTL and LTR scrollLeft conventions,
+  // and never scroll the page itself.
+  const on = box.querySelector('[aria-pressed="true"]');
+  if (on && !box.hidden) {
+    const r = on.getBoundingClientRect(), b = box.getBoundingClientRect();
+    if (r.left < b.left) box.scrollLeft -= b.left - r.left + 8;
+    else if (r.right > b.right) box.scrollLeft += r.right - b.right + 8;
+  }
+}
+function selectContact(id) {
+  const before = targetLang();
+  S.current = id;
+  save();
+  renderChips();
+  syncTarget(false);
+  updateSend();
+  if (comp && targetLang() !== before) runCompose();
+}
+
+/* ---------- Write tab ---------- */
+let comp = null;      // { src, tl, results[], chosen }
+let outDirty = false; // user edited the translation after it came back
+let backToken = 0;
+let composeSeq = 0;   // only the newest translation may land
+let composeBusy = false;
+
+function targetLang() { return $('#targetSel').value || (curContact() ? curContact().lang : S.quickLang); }
+function syncTarget(keep) {
+  const c = curContact();
+  const want = keep && $('#targetSel').value ? $('#targetSel').value : (c ? c.lang : S.quickLang);
+  fillLangSelect($('#targetSel'), want);
+  if (!keep) $('#attachChk').checked = c ? !!c.attach : false;
+  updateSaveLang();
+}
+function updateSaveLang() {
+  const c = curContact();
+  const show = !!c && $('#targetSel').value !== c.lang;
+  $('#saveLangRow').hidden = !show;
+  if (show) $('#btnSaveLang').textContent = t('saveForContact', c.name);
+}
+
+async function runCompose() {
+  const src = $('#srcText').value.trim();
+  if (!src) { toast(t('emptyText')); return; }
+  const tl = targetLang();
+  const btn = $('#btnTranslate');
+  const mySeq = ++composeSeq;
+  composeBusy = true;
+  setBusy(btn, true);
+  updateSend();
+  const results = await runAll(src, tl, 'auto');
+  if (mySeq !== composeSeq) return;
+  composeBusy = false;
+  setBusy(btn, false);
+  comp = { src, tl, results, chosen: results.findIndex(r => r.ok) };
+  outDirty = false;
+  const myToken = ++backToken;
+  renderCompose(true);
+  if (S.back && base(tl) !== 'iw') {
+    results.forEach(r => {
+      if (!r.ok) return;
+      r.back = { pending: true };
+      translate(r.text, 'iw', tl, r.engine)
+        .then(x => { r.back = { text: x.text }; })
+        .catch(e => { r.back = { err: e }; })
+        .finally(() => { if (myToken === backToken) renderCompose(false); });
+    });
+    renderCompose(false);
+  }
+}
+
+function backLine(b) {
+  if (!b) return '';
+  const line = el('div', { class: 'back' }, t('backLabel') + ' ');
+  if (b.pending) line.append(t('checking'));
+  else if (b.err) line.append(el('span', { class: 'err' }, errMsg(b.err)));
+  else line.append(el('bdi', { class: 'bt', dir: 'auto' }, b.text));
+  return line;
+}
+
+const engineLabel = r => t(r.engine === 'free' ? 'engFree' : 'engOfficial') + (r.fallbackFrom ? ' (' + t('backup') + ')' : '');
+
+function resultCard(r, idx, opts) {
+  const c = el('div', { class: 'card rcard' + (opts.chosen ? ' chosen' : '') });
+  const head = el('div', { class: 'rhead' });
+  head.append(el('span', { class: 'badge' }, engineLabel(r)));
+  if (r.ok) head.append(el('span', { class: 'muted' }, [opts.detected ? t('autoDetected', langName(r.detected)) : '', t('ms', r.ms)].filter(Boolean).join(' · ')));
+  c.append(head);
+  if (!r.ok) {
+    c.append(el('div', { class: 'err', style: 'margin-top:8px' }, errMsg(r.err)));
+    if (r.err && r.err.code === 'nokey') c.append(el('div', { class: 'row' }, el('button', { type: 'button', class: 'btn small', onclick: () => showTab('settings') }, t('goSettings'))));
+    return c;
+  }
+  c.append(el('div', { class: 'rtext', dir: 'auto', lang: bcp(opts.lang) }, r.text));
+  if (opts.withBack) c.append(backLine(r.back));
+  if (opts.choose) c.append(el('div', { class: 'row', style: 'margin-bottom:0' },
+    el('button', { type: 'button', class: 'btn small' + (opts.chosen ? ' primary' : ''), onclick: () => chooseResult(idx) }, opts.chosen ? t('chosen') : t('useThis'))));
+  return c;
+}
+
+function renderCompose(setOut) {
+  const cards = $('#composeCards');
+  const box = $('#resultBox');
+  if (!comp) { cards.hidden = true; box.hidden = true; return; }
+  const multi = comp.results.length > 1;
+  const anyErr = comp.results.some(r => !r.ok);
+  cards.textContent = '';
+  cards.classList.toggle('two', multi);
+  cards.hidden = !(multi || anyErr);
+  if (!cards.hidden) comp.results.forEach((r, i) => cards.append(resultCard(r, i, {
+    lang: comp.tl, withBack: multi && S.back, choose: multi && r.ok, chosen: multi && i === comp.chosen, detected: false,
+  })));
+  const ch = comp.results[comp.chosen];
+  box.hidden = !ch;
+  if (!ch) return;
+  const out = $('#outText');
+  if (setOut) out.value = ch.text;
+  out.lang = bcp(comp.tl);
+  renderOutBack();
+  $('#outMeta').textContent = [t('autoDetected', langName(ch.detected)), engineLabel(ch), t('ms', ch.ms)].join(' · ');
+  updateSend();
+}
+function renderOutBack() {
+  const box = $('#outBack');
+  box.textContent = '';
+  if (!comp || !S.back || base(comp.tl) === 'iw') return;
+  const ch = comp.results[comp.chosen];
+  if (outDirty) {
+    box.append(t('editedHint') + ' ', el('button', { type: 'button', class: 'btn link', onclick: recheckOut }, t('recheck')));
+    return;
+  }
+  // In compare mode each card already shows its own back-translation.
+  if (comp.results.length > 1) return;
+  const line = backLine(ch && ch.back);
+  if (line) box.append(...line.childNodes);
+}
+function chooseResult(i) {
+  comp.chosen = i;
+  outDirty = false;
+  renderCompose(true);
+}
+async function recheckOut() {
+  const ch = comp.results[comp.chosen];
+  const text = $('#outText').value.trim();
+  if (!text) return;
+  ch.text = text;
+  ch.back = { pending: true };
+  outDirty = false;
+  renderOutBack();
+  try { ch.back = { text: (await translate(text, 'iw', comp.tl, ch.engine)).text }; }
+  catch (e) { ch.back = { err: e }; }
+  renderCompose(false);
+}
+
+function finalMessage() {
+  const out = $('#outText').value.trim();
+  if (!out || !comp) return '';
+  return $('#attachChk').checked ? out + '\n\n—\n' + comp.src : out;
+}
+function updateSend() {
+  const a = $('#btnSend');
+  // While a (re)translation is in flight the box still holds the previous language: don't let it be sent.
+  const msg = composeBusy ? '' : finalMessage();
+  const c = curContact();
+  const href = msg ? waLink(c && c.phone, msg) : '#';
+  a.classList.toggle('disabled', !msg);
+  a.setAttribute('href', href);
+  if (href.startsWith('https:')) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  else { a.removeAttribute('target'); a.removeAttribute('rel'); }
+  $('#sendHint').textContent = c ? (c.phone ? t('hintChat', c.name) : t('hintPick', c.name)) : t('hintQuick');
+}
+
+/* ---------- Incoming tab ---------- */
+let inc = null; // { text, results[] }
+async function pasteAndTranslate() {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    try {
+      const txt = await navigator.clipboard.readText();
+      if (txt && txt.trim()) { $('#inText').value = txt; return runIncoming(); }
+    } catch {}
+  }
+  $('#inText').focus();
+  toast(t('pasteManual'));
+}
+async function runIncoming() {
+  const text = $('#inText').value.trim();
+  if (!text) { toast(t('emptyText')); return; }
+  const btn = $('#btnInTranslate');
+  setBusy(btn, true);
+  const results = await runAll(text, 'iw', 'auto');
+  setBusy(btn, false);
+  inc = { text, results };
+  renderIncoming();
+}
+function renderIncoming() {
+  const cards = $('#inCards');
+  const sug = $('#langSuggest');
+  cards.textContent = '';
+  sug.textContent = '';
+  sug.hidden = true;
+  $('#btnReply').hidden = !inc;
+  if (!inc) return;
+  cards.classList.toggle('two', inc.results.length > 1);
+  inc.results.forEach((r, i) => cards.append(resultCard(r, i, { lang: 'iw', detected: true })));
+  const ok = inc.results.find(r => r.ok);
+  if (!ok || !ok.detected || base(ok.detected) === 'iw') return;
+  const det = ok.detected;
+  const c = curContact();
+  const current = c ? c.lang : S.quickLang;
+  if (base(current) === base(det)) return;
+  sug.append(el('div', {}, c ? t('suggestLang', langName(det), c.name, langName(c.lang)) : t('suggestQuick', langName(det))));
+  sug.append(el('div', { class: 'row', style: 'margin-bottom:0' }, el('button', { type: 'button', class: 'btn small primary', onclick: () => {
+    if (c) c.lang = det; else S.quickLang = det;
+    save();
+    renderChips();
+    syncTarget(false);
+    renderIncoming();
+    toast(t('saved'));
+  } }, t('update', langName(det)))));
+  sug.hidden = false;
+}
+
+/* ---------- Contacts tab ---------- */
+let editId = null;
+let formReturn = null;
+function openForm(c, returnTab) {
+  editId = c ? c.id : null;
+  formReturn = returnTab || null;
+  $('#formTitle').textContent = c ? t('editContact') : t('addContact');
+  $('#fName').value = c ? c.name : '';
+  $('#fPhone').value = c && c.phone ? '+' + c.phone : '';
+  $('#fLangFilter').value = '';
+  fillLangSelect($('#fLang'), c ? c.lang : (S.quickLang || 'en'));
+  $('#fAttach').checked = c ? !!c.attach : false;
+  $('#contactForm').hidden = false;
+  $('#btnAddContact').hidden = true;
+  $('#fName').focus();
+}
+function closeForm() {
+  $('#contactForm').hidden = true;
+  $('#btnAddContact').hidden = false;
+  editId = null;
+}
+function submitForm(e) {
+  e.preventDefault();
+  const name = $('#fName').value.trim().slice(0, 80);
+  if (!name) { toast(t('errName')); return; }
+  const rawPhone = $('#fPhone').value.trim();
+  const phone = normPhone(rawPhone);
+  if (rawPhone && !/^\d{8,15}$/.test(phone)) { toast(t('errPhone')); return; }
+  const data = { name, phone, lang: $('#fLang').value || 'en', attach: $('#fAttach').checked };
+  const existing = editId && S.contacts.find(c => c.id === editId);
+  if (existing) Object.assign(existing, data);
+  else { const c = Object.assign({ id: uid(), last: Date.now() }, data); S.contacts.push(c); S.current = c.id; }
+  save();
+  const back = formReturn || (!existing ? 'compose' : null);
+  closeForm();
+  renderWelcome();
+  renderContacts();
+  renderChips();
+  syncTarget(false);
+  updateSend();
+  toast(t('saved'));
+  if (back) showTab(back);
+}
+function renderContacts() {
+  const ul = $('#contactList');
+  ul.textContent = '';
+  if (!S.contacts.length) { ul.append(el('li', { class: 'empty' }, t('noContacts'))); return; }
+  [...S.contacts].sort((a, b) => a.name.localeCompare(b.name, ui)).forEach(c => {
+    const info = el('div', { class: 'cinfo' }, el('strong', {}, c.name));
+    const sub = el('span', { class: 'muted' }, langName(c.lang));
+    if (c.phone) sub.append(' · ', el('bdi', { dir: 'ltr' }, '+' + c.phone));
+    info.append(sub);
+    ul.append(el('li', { class: 'citem' }, info, el('div', { class: 'cact' },
+      el('button', { type: 'button', class: 'btn small primary', onclick: () => { selectContact(c.id); showTab('compose'); } }, t('select')),
+      el('button', { type: 'button', class: 'btn small', onclick: () => openForm(c) }, t('edit')),
+      el('button', { type: 'button', class: 'btn small ghost', onclick: () => {
+        if (!confirm(t('confirmDel', c.name))) return;
+        S.contacts = S.contacts.filter(x => x.id !== c.id);
+        if (S.current === c.id) S.current = null;
+        save(); renderContacts(); renderChips(); syncTarget(false); updateSend();
+      } }, t('del')))));
+  });
+}
+async function pickFromPhone() {
+  try {
+    const [c] = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+    if (!c) return;
+    if (c.name && c.name[0]) $('#fName').value = c.name[0];
+    if (c.tel && c.tel[0]) $('#fPhone').value = c.tel[0];
+  } catch {}
+}
+async function exportContacts() {
+  const data = JSON.stringify({ app: 'wa-translator', v: 1, contacts: S.contacts.map(({ name, phone, lang, attach }) => ({ name, phone, lang, attach })) }, null, 2);
+  const file = new File([data], 'wa-translator-contacts.json', { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: t('export') }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = el('a', { href: URL.createObjectURL(file), download: file.name });
+  document.body.append(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+async function importContacts(file) {
+  try {
+    const obj = JSON.parse(await file.text());
+    const arr = Array.isArray(obj) ? obj : obj && obj.contacts;
+    if (!Array.isArray(arr)) throw new Error('shape');
+    let n = 0;
+    for (const x of arr) {
+      if (!x || typeof x.name !== 'string' || !x.name.trim()) continue;
+      const name = x.name.trim().slice(0, 80);
+      const phone = normPhone(typeof x.phone === 'string' || typeof x.phone === 'number' ? String(x.phone) : '');
+      if (phone && !/^\d{8,15}$/.test(phone)) continue;
+      const lang = typeof x.lang === 'string' && /^[A-Za-z]{2,3}(-[A-Za-z]{2,4})?$/.test(x.lang) ? x.lang : 'en';
+      const data = { name, phone, lang, attach: !!x.attach };
+      const ex = S.contacts.find(c => phone ? c.phone === phone : (!c.phone && c.name === name));
+      if (ex) Object.assign(ex, data); else S.contacts.push(Object.assign({ id: uid(), last: 0 }, data));
+      n++;
+    }
+    save(); renderContacts(); renderChips(); syncTarget(true);
+    toast(t('imported', n));
+  } catch { toast(t('importBad')); }
+}
+
+/* ---------- Settings tab ---------- */
+function renderKeyStatus() {
+  $('#keyStatus').textContent = apiKey ? t('keySaved', apiKey.slice(-4)) : t('keyNone');
+}
+function renderUsage() {
+  const m = new Date().toISOString().slice(0, 7);
+  const n = S.usage && S.usage.m === m ? S.usage.chars : 0;
+  $('#usageText').textContent = t('usageText', n.toLocaleString(ui === 'he' ? 'he-IL' : 'en-US'));
+}
+let installEvt = null;
+function renderInstall() {
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const txt = $('#installText');
+  $('#btnInstall').hidden = !(installEvt && !standalone);
+  if (standalone) txt.textContent = t('installed');
+  else if (!window.isSecureContext) txt.textContent = t('installNeedsHttps');
+  else if (IS_IOS) txt.textContent = t('installIos');
+  else txt.textContent = installEvt ? '' : t('installAndroid');
+}
+async function testKey() {
+  const out = $('#keyTest');
+  out.className = 'hint';
+  out.textContent = t('checking');
+  try {
+    const r = await translate('שלום', 'en', 'iw', 'official');
+    out.textContent = t('keyOk', r.text, r.ms);
+  } catch (e) { out.className = 'hint err'; out.textContent = errMsg(e); }
+}
+function renderSettings() {
+  $$('input[name=engine]').forEach(r => { r.checked = r.value === S.engine; });
+  $('#backChk').checked = !!S.back;
+  $('#linkSel').value = S.linkMode;
+  // The key's website restriction must name wherever this copy of the app is served from.
+  const appPattern = location.protocol === 'file:' ? 'https://<your-site>/*' : location.origin + location.pathname.replace(/[^/]*$/, '') + '*';
+  const ol = $('#guideList');
+  ol.textContent = '';
+  t('guide').forEach(s => ol.append(el('li', {}, s.split('{0}').join(appPattern))));
+  renderKeyStatus();
+  renderUsage();
+  renderInstall();
+}
+
+/* ---------- first-run welcome ---------- */
+function renderWelcome() {
+  $('#welcome').hidden = !!S.welcomed || S.contacts.length > 0;
+  const ol = $('#welcomeSteps');
+  ol.textContent = '';
+  t('welcomeSteps').forEach(s => ol.append(el('li', {}, s)));
+}
+function dismissWelcome() { S.welcomed = true; save(); renderWelcome(); }
+
+/* ---------- tabs, theme, interface language ---------- */
+function showTab(name) {
+  $$('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + name));
+  $$('nav.bottom button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+  $('#chips').hidden = !(name === 'compose' || name === 'incoming');
+  if (name !== 'contacts') closeForm();
+  window.scrollTo(0, 0);
+}
+function applyTheme(th) {
+  document.documentElement.classList.toggle('dark', th === 'dark');
+  $$('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === th)));
+  document.querySelector('meta[name=theme-color]').content = th === 'dark' ? '#151d1a' : '#0f7b5f';
+}
+function applyUi(l) {
+  ui = l;
+  const h = document.documentElement;
+  h.lang = l;
+  h.dir = l === 'he' ? 'rtl' : 'ltr';
+  document.title = t('appTitle');
+  $$('[data-i18n]').forEach(e => { e.textContent = t(e.dataset.i18n); });
+  $$('[data-i18n-ph]').forEach(e => { e.placeholder = t(e.dataset.i18nPh); });
+  $$('[data-i18n-aria]').forEach(e => { e.setAttribute('aria-label', t(e.dataset.i18nAria)); });
+  $$('[data-ui-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.uiLang === l)));
+  renderWelcome();
+  renderChips();
+  syncTarget(true);
+  if (!$('#contactForm').hidden) fillLangSelect($('#fLang'), $('#fLang').value, $('#fLangFilter').value);
+  renderContacts();
+  renderSettings();
+  renderCompose(false);
+  renderIncoming();
+  updateSend();
+}
+
+/* ---------- wiring ---------- */
+$$('[data-ui-lang]').forEach(b => b.addEventListener('click', () => { LS.set(K.ui, b.dataset.uiLang); applyUi(b.dataset.uiLang); }));
+$$('[data-theme-set]').forEach(b => b.addEventListener('click', () => { LS.set(K.theme, b.dataset.themeSet); applyTheme(b.dataset.themeSet); }));
+$$('nav.bottom button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
+$('#targetSel').addEventListener('change', () => {
+  if (!curContact()) { S.quickLang = $('#targetSel').value; save(); }
+  updateSaveLang();
+  if (comp) runCompose();
+});
+$('#btnSaveLang').addEventListener('click', () => {
+  const c = curContact();
+  if (!c) return;
+  c.lang = $('#targetSel').value;
+  save(); renderChips(); renderContacts(); updateSaveLang(); toast(t('saved'));
+});
+$('#btnWelcomeOk').addEventListener('click', dismissWelcome);
+$('#btnWelcomeAdd').addEventListener('click', () => { dismissWelcome(); showTab('contacts'); openForm(null, 'compose'); });
+$('#btnTranslate').addEventListener('click', runCompose);
+$('#srcText').addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCompose(); } });
+$('#outText').addEventListener('input', () => { outDirty = true; renderOutBack(); updateSend(); });
+$('#attachChk').addEventListener('change', updateSend);
+$('#btnSend').addEventListener('click', e => {
+  if (!finalMessage()) { e.preventDefault(); return; }
+  const c = curContact();
+  if (c) { c.last = Date.now(); save(); }
+  toast(t('sent'));
+});
+$('#btnCopy').addEventListener('click', async () => { if (await copyText(finalMessage())) toast(t('copied')); });
+$('#btnClear').addEventListener('click', () => {
+  $('#srcText').value = '';
+  $('#outText').value = '';
+  composeSeq++;
+  composeBusy = false;
+  setBusy($('#btnTranslate'), false);
+  comp = null;
+  outDirty = false;
+  renderCompose(false);
+  updateSend();
+  renderChips();
+  $('#srcText').focus();
+});
+
+$('#btnPaste').addEventListener('click', pasteAndTranslate);
+$('#btnInTranslate').addEventListener('click', runIncoming);
+$('#inText').addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runIncoming(); } });
+$('#btnInClear').addEventListener('click', () => { $('#inText').value = ''; inc = null; renderIncoming(); });
+$('#btnReply').addEventListener('click', () => { showTab('compose'); $('#srcText').focus(); });
+
+$('#btnAddContact').addEventListener('click', () => openForm(null));
+$('#btnFormCancel').addEventListener('click', () => { const back = formReturn; closeForm(); if (back) showTab(back); });
+$('#contactForm').addEventListener('submit', submitForm);
+$('#fLangFilter').addEventListener('input', () => fillLangSelect($('#fLang'), $('#fLang').value, $('#fLangFilter').value));
+$('#btnPick').hidden = !('contacts' in navigator && 'select' in navigator.contacts);
+$('#btnPick').addEventListener('click', pickFromPhone);
+$('#btnExport').addEventListener('click', exportContacts);
+$('#btnImport').addEventListener('click', () => $('#importFile').click());
+$('#importFile').addEventListener('change', e => { const f = e.target.files[0]; if (f) importContacts(f); e.target.value = ''; });
+
+$$('input[name=engine]').forEach(r => r.addEventListener('change', () => { S.engine = r.value; save(); }));
+$('#btnShowKey').addEventListener('click', () => {
+  const i = $('#keyInput');
+  const showing = i.type === 'text';
+  i.type = showing ? 'password' : 'text';
+  $('#btnShowKey').dataset.i18n = showing ? 'show' : 'hide';
+  $('#btnShowKey').textContent = t($('#btnShowKey').dataset.i18n);
+});
+$('#btnSaveKey').addEventListener('click', () => {
+  const v = $('#keyInput').value.trim();
+  if (!v) return;
+  apiKey = v;
+  LS.set(K.key, v);
+  $('#keyInput').value = '';
+  renderKeyStatus();
+  toast(t('saved'));
+});
+$('#btnClearKey').addEventListener('click', () => { apiKey = ''; LS.del(K.key); renderKeyStatus(); $('#keyTest').textContent = ''; });
+$('#btnTestKey').addEventListener('click', testKey);
+$('#backChk').addEventListener('change', () => { S.back = $('#backChk').checked; save(); renderCompose(false); });
+$('#linkSel').addEventListener('change', () => { S.linkMode = $('#linkSel').value; save(); updateSend(); });
+$('#btnWipe').addEventListener('click', () => {
+  if (!confirm(t('confirmWipe'))) return;
+  Object.values(K).forEach(k => LS.del(k));
+  location.reload();
+});
+
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; renderInstall(); });
+window.addEventListener('appinstalled', () => { installEvt = null; renderInstall(); });
+$('#btnInstall').addEventListener('click', async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice.catch(() => {}); installEvt = null; renderInstall(); });
+
+/* ---------- start ---------- */
+applyTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+applyUi(ui);
+syncTarget(false);
+showTab('compose');
+
+// Android share-target: text shared into the installed app lands in ?text=
+(() => {
+  const p = new URLSearchParams(location.search);
+  const shared = (p.get('text') || p.get('title') || p.get('url') || '').trim();
+  if (!shared) return;
+  history.replaceState(null, '', location.pathname);
+  showTab('incoming');
+  $('#inText').value = shared;
+  runIncoming();
+})();
+
+if ('serviceWorker' in navigator && window.isSecureContext && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
