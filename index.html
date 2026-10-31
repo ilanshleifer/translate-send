@@ -154,6 +154,7 @@ nav.bottom button[aria-selected="true"]{color:var(--accent);font-weight:600}
       <div class="hint" data-i18n="welcomePrivacy"></div>
       <div class="row" style="margin-bottom:0">
         <button type="button" class="btn primary small" id="btnWelcomeAdd" data-i18n="newContact">+ איש קשר חדש</button>
+        <a class="btn small" href="help.html" data-i18n="helpLink">📖 מדריך שימוש</a>
         <button type="button" class="btn ghost small" id="btnWelcomeOk" data-i18n="welcomeOk">הבנתי</button>
       </div>
     </div>
@@ -229,6 +230,9 @@ nav.bottom button[aria-selected="true"]{color:var(--accent);font-weight:600}
 
   <!-- ============ Settings ============ -->
   <section id="tab-settings" class="tab">
+    <h2 data-i18n="sHelp">עזרה</h2>
+    <a class="btn wide" href="help.html" data-i18n="helpLink">📖 מדריך שימוש</a>
+
     <h2 data-i18n="sEngine">מנוע תרגום</h2>
     <fieldset id="engineSet">
       <label class="opt"><input type="radio" name="engine" value="free"><span><b data-i18n="eFree"></b><small data-i18n="eFreeD"></small></span></label>
@@ -322,7 +326,7 @@ const I18N = {
       'קיבלת הודעה בשפה אחרת? מעתיקים אותה, ובלשונית "נכנסת" לוחצים "הדבק ותרגם".',
     ],
     welcomePrivacy: 'אנשי הקשר נשמרים רק בטלפון שלך. הטקסט שמתרגמים נשלח ל-Google Translate.',
-    welcomeOk: 'הבנתי',
+    welcomeOk: 'הבנתי', helpLink: '📖 מדריך שימוש', sHelp: 'עזרה',
     notAffiliated: 'תרגם ושלח היא אפליקציה עצמאית ואינה קשורה ל-WhatsApp, ל-Meta או ל-Google.',
     backup: 'גיבוי',
     tabCompose: 'כתיבה', tabIncoming: 'נכנסת', tabContacts: 'אנשי קשר', tabSettings: 'הגדרות',
@@ -398,7 +402,7 @@ const I18N = {
       'Got a message in another language? Copy it, then on the "Incoming" tab tap "Paste & translate".',
     ],
     welcomePrivacy: 'Your contacts stay on your phone only. Text you translate is sent to Google Translate.',
-    welcomeOk: 'Got it',
+    welcomeOk: 'Got it', helpLink: '📖 User guide', sHelp: 'Help',
     notAffiliated: 'Translate & Send is an independent app, not affiliated with WhatsApp, Meta or Google.',
     backup: 'backup',
     tabCompose: 'Write', tabIncoming: 'Incoming', tabContacts: 'Contacts', tabSettings: 'Settings',
@@ -465,7 +469,8 @@ const I18N = {
     errHttp: 'Error {0}', errGeneric: 'Error:',
   },
 };
-let ui = LS.get(K.ui, 'he') === 'en' ? 'en' : 'he';
+// The guide also offers Thai; the app itself has Hebrew and English, so a Thai reader gets English.
+let ui = ['en', 'th'].includes(LS.get(K.ui, 'he')) ? 'en' : 'he';
 function t(k, ...a) {
   let s = I18N[ui][k] ?? I18N.he[k] ?? k;
   if (typeof s === 'string') a.forEach((v, i) => { s = s.split('{' + i + '}').join(v); });

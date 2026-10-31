@@ -1,7 +1,7 @@
 // App-shell cache. Network first so updates show up immediately; cache is the offline fallback.
 // Translation requests go to Google and are never cached.
-const CACHE = 'wat-v2';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+const CACHE = 'wat-v3';
+const SHELL = ['./', './index.html', './help.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
@@ -11,7 +11,8 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      // Other apps live on the same origin (ilanshleifer.github.io) and share CacheStorage: only drop our own old caches.
+      .then(keys => Promise.all(keys.filter(k => k.startsWith('wat-') && k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
